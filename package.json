@@ -8,12 +8,16 @@
   "license": "MIT",
   "files": [
     "dist/*",
+    "!**/__test__/**",
     "LICENSE",
     "package.json",
     "README.md"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "csv-stringify": "^5.3.3"
+  },
   "devDependencies": {
+    "@types/node": "^12.7.4",
     "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
     "typescript": "^3.6.2"
