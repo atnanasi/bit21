@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 
-import stringify from "csv-stringify"
-import readline from "readline"
+import stringify from 'csv-stringify'
+import readline from 'readline'
 
-import { Login } from "./convert"
-import Bitwarden, { Item } from "./bitwarden"
+import { card, ITEM_ID, login, secureNote } from './convert'
+import Bitwarden from './bitwarden'
 
-const csvStringify = (items: Array<any>, options?: stringify.Options): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    stringify(items, options || {}, (err, output) => {
-      if (err) reject(err)
-      resolve(output)
-    });
+const csvStringify = (
+  items: Array<any>,
+  options?: stringify.Options
+): Promise<string> =>
+  new Promise((resolve, reject) => {
+    stringify(items, options ?? {}, (err, output) =>
+      err ? reject(err) : resolve(output)
+    )
   })
-}
 
-const readStdin = (): Promise<string> => {
-  return new Promise(resolve => {
-    let lines: string[] = [];
+const readStdin = (): Promise<string> =>
+  new Promise((resolve) => {
+    let lines: string[] = []
 
     const reader = readline.createInterface({
       input: process.stdin,
@@ -25,22 +26,31 @@ const readStdin = (): Promise<string> => {
       terminal: false,
     })
 
-    reader.on('line', function (line) {
-      lines.push(line);
-    })
+    reader.on('line', (line) => lines.push(line))
 
-    reader.on('close', function () {
-      resolve(lines.join("\n"))
-    })
+    reader.on('close', () => resolve(lines.join('\n')))
   })
-}
 
-(async () => {
+async function main() {
   const json = await readStdin()
 
   const parsed: Bitwarden = JSON.parse(json)
 
-  const converted = parsed.items.map((item: Item) => {return Login(item)})
+  const l = login(parsed.items.filter((item) => item.type === ITEM_ID.login))
+  process.stdout.write(
+    await csvStringify(l.lines, { header: true, columns: l.columns })
+  )
 
-  process.stdout.write(await csvStringify(converted))
-})().catch(err => {console.error(err)})
+  const i = secureNote(
+    parsed.items.filter((item) => item.type === ITEM_ID.secureNote)
+  )
+  process.stdout.write(
+    await csvStringify(i.lines, { header: true, columns: i.columns })
+  )
+
+  const c = card(parsed.items.filter((item) => item.type === ITEM_ID.card))
+  process.stdout.write(
+    await csvStringify(c.lines, { header: true, columns: c.columns })
+  )
+}
+main().catch((e) => console.error(e))

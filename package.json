@@ -1,33 +1,32 @@
 {
   "name": "bit21",
-  "version": "1.0.0",
-  "description": "Convert bitwarden json export to 1Password compatible csv",
+  "version": "2.0.0",
+  "description": "Convert bitwarden json exports to 1Password compatible csv file",
   "main": "dist/index.js",
-  "repository": "ssh://git@github.com/atnanasi/bit21.git",
-  "author": "Atnanasi <ys2000pro@gmail.com>",
+  "repository": "ssh://git@github.com/rokoucha/bit21.git",
+  "author": "Rokoucha <github@rokoucha.net>",
   "license": "MIT",
   "files": [
     "dist/*",
-    "!**/__test__/**",
     "LICENSE",
     "package.json",
-    "README.md"
+    "README.md",
+    "yarn.lock"
   ],
   "dependencies": {
-    "csv-stringify": "^5.3.3"
+    "csv-stringify": "^5.6.2"
   },
   "devDependencies": {
-    "@types/node": "^12.7.4",
-    "prettier": "^1.18.2",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.6.2"
+    "@types/node": "^14.14.37",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.3"
   },
   "bin": {
     "bit21": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
-    "start": "ts-node ./src/index.ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "dev": "yarn run build && yarn run start",
+    "start": "node ./dist/index.js"
   }
 }
